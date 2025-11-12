@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Suture Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAFA;
+            color: #2C3E50;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .navigation {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(27, 75, 90, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 7xl;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4rem;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1B4B5A;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: #1B4B5A;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #E07A5F;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #1B4B5A 0%, #81B29A 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 4xl;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #E07A5F;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #d16847;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #1B4B5A;
+            color: white;
+            margin-left: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #153a45;
+        }
+        
+        .main-content {
+            max-width: 7xl;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .wizard-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            margin: 0 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .step-dot.active {
+            background-color: #E07A5F;
+            transform: scale(1.2);
+        }
+        
+        .wizard-step {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .wizard-step.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1B4B5A;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #E07A5F;
+            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.1);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .recommendations {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .recommendations h2 {
+            color: #1B4B5A;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-card {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #E07A5F;
+        }
+        
+        .recommendation-card h3 {
+            color: #1B4B5A;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .rank {
+            background-color: #E07A5F;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            float: right;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: #2C3E50;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+        }
+        
+        .tag.advantage {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1B4B5A 0%, #0f3a47 50%, #1B4B5A 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer p {
+            opacity: 0.85;
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+        
+        .footer p:first-child {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .footer p:last-child {
+            opacity: 0.75;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: #E07A5F;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-secondary {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="logo">SutureGuide</div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Selection Wizard</a>
+                    <a href="types.html" class="nav-link">Suture Types</a>
+                    <a href="comparison.html" class="nav-link">Comparison</a>
+                    <a href="needles.html" class="nav-link">Needle Guide</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Interactive Suture Selection Guide</h1>
+            <p>Evidence-based suture selection for optimal surgical outcomes</p>
+            <a href="#wizard" class="btn btn-primary">Start Selection Wizard</a>
+            <a href="types.html" class="btn btn-secondary">Explore Suture Types</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Suture Selection Wizard -->
+        <section id="wizard">
+            <div class="wizard-container">
+                <div class="step-indicator">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+
+                <!-- Step 1: Wound Location -->
+                <div class="wizard-step active">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Step 1: Wound Location</h2>
+                    <div class="form-group">
+                        <label class="form-label">Select wound location:</label>
+                        <select name="woundLocation" class="form-select" required>
+                            <option value="">Choose location...</option>
+                            <option value="face">Face (cosmetically sensitive)</option>
+                            <option value="scalp">Scalp</option>
+                            <option value="neck">Neck</option>
+                            <option value="trunk">Trunk (chest, back, abdomen)</option>
+                            <option value="upper-extremity">Upper extremity (arm, hand)</option>
+                            <option value="lower-extremity">Lower extremity (leg, foot)</option>
+                            <option value="oral">Oral cavity</option>
+                            <option value="perineum">Perineum</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <div></div>
+                        <button type="button" class="btn btn-primary next-step">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Tissue Type -->
+                <div class="wizard-step">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Step 2: Tissue Type</h2>
+                    <div class="form-group">
+                        <label class="form-label">Primary tissue type to be sutured:</label>
+                        <select name="tissueType" class="form-select" required>
+                            <option value="">Choose tissue type...</option>
+                            <option value="skin">Skin/Epidermis</option>
+                            <option value="dermis">Dermis (deep layer)</option>
+                            <option value="subcutaneous">Subcutaneous tissue</option>
+                            <option value="fascia">Fascia (connective tissue)</option>
+                            <option value="muscle">Muscle</option>
+                            <option value="vessel">Blood vessels</option>
+                            <option value="nerve">Nerves</option>
+                            <option value="tendon">Tendons</option>
+                            <option value="mucosa">Mucous membrane</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                        <button type="button" class="btn btn-primary next-step">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Tension Level -->
+                <div class="wizard-step">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Step 3: Wound Tension</h2>
+                    <div class="form-group">
+                        <label class="form-label">Expected tension across wound:</label>
+                        <select name="tensionLevel" class="form-select" required>
+                            <option value="">Choose tension level...</option>
+                            <option value="low">Low tension (minimal stress)</option>
+                            <option value="moderate">Moderate tension (some movement expected)</option>
+                            <option value="high">High tension (joint area, significant movement)</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                        <button type="button" class="btn btn-primary next-step">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Infection Risk -->
+                <div class="wizard-step">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Step 4: Infection Risk</h2>
+                    <div class="form-group">
+                        <label class="form-label">Risk of wound infection:</label>
+                        <select name="infectionRisk" class="form-select" required>
+                            <option value="">Choose infection risk...</option>
+                            <option value="low">Low risk (clean wound, healthy patient)</option>
+                            <option value="moderate">Moderate risk (some contamination, comorbidities)</option>
+                            <option value="high">High risk (contaminated, immunocompromised)</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                        <button type="button" class="btn btn-primary next-step">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Cosmetic Importance -->
+                <div class="wizard-step">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Step 5: Cosmetic Considerations</h2>
+                    <div class="form-group">
+                        <label class="form-label">Cosmetic importance of final scar:</label>
+                        <select name="cosmeticImportance" class="form-select" required>
+                            <option value="">Choose importance level...</option>
+                            <option value="low">Low (covered area, minimal concern)</option>
+                            <option value="moderate">Moderate (visible but not critical)</option>
+                            <option value="high">High (face, hands, cosmetically sensitive)</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                        <button type="button" class="btn btn-primary next-step">Get Recommendations</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section id="recommendations" class="recommendations">
+            <h2 class="text-3xl font-bold mb-6 text-center">Your Suture Recommendations</h2>
+            <p class="text-center text-gray-600 mb-8">Based on your selections, here are the most appropriate suture options:</p>
+            <div id="recommendations-container">
+                <div class="text-center text-gray-500">
+                    <p>Complete the selection wizard above to see personalized recommendations.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p>&copy; 2024 SutureGuide - Interactive Medical Education. For educational purposes only. Always consult current medical guidelines and institutional protocols.</p>
+            <p>Designed & Developed by Ritik Dhage</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        console.log('%c=== INDEX.HTML: Loading main.js ===', 'color: yellow; font-weight: bold; font-size: 14px');
+    </script>
+    
+    <script src="main.js"></script>
+    
+    <script>
+        console.log('%c=== INDEX.HTML: main.js loaded, checking initialization ===', 'color: cyan; font-weight: bold; font-size: 14px');
+        
+        // Verify initialization
+        if (window.sutureSelector) {
+            console.log('✓✓✓ SUCCESS: Application fully initialized');
+        } else {
+            console.error('✗✗✗ ERROR: Application did not initialize properly');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suture Types & Classifications - Medical Education Guide</title>
+    <meta name="description" content="Comprehensive guide to suture types, materials, and classifications. Interactive learning for medical professionals.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #1B4B5A;
+            --secondary-color: #E07A5F;
+            --tertiary-color: #81B29A;
+            --neutral-base: #FAFAFA;
+            --text-color: #2C3E50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-base);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--tertiary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .navigation {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(27, 75, 90, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-link {
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .classification-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .filter-tab.active {
+            color: var(--secondary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+        
+        .filter-tab:hover {
+            color: var(--secondary-color);
+        }
+        
+        .suture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .suture-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--tertiary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .suture-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-left-color: var(--secondary-color);
+        }
+        
+        .suture-card.expanded {
+            background: white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .suture-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .suture-type {
+            font-size: 0.875rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .absorbable-badge {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .nonabsorbable-badge {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .card-content {
+            display: none;
+        }
+        
+        .card-content.expanded {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+        
+        .property-row {
+            display: flex;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .property-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+        
+        .property-value {
+            color: var(--text-color);
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: var(--text-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+        }
+        
+        .tag.advantage {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .tag.disadvantage {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .timeline-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .timeline-chart {
+            height: 400px;
+            margin-top: 1rem;
+        }
+        
+        .classification-tree {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .tree-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .animate-on-scroll.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0f3a47 50%, var(--primary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.85;
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+        
+        .footer p:first-child {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .footer p:last-child {
+            opacity: 0.75;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .suture-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+            
+            .property-row {
+                flex-direction: column;
+            }
+            
+            .property-label {
+                min-width: auto;
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-primary-color">SutureGuide</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="nav-link">Selection Wizard</a>
+                        <a href="types.html" class="nav-link">Suture Types</a>
+                        <a href="comparison.html" class="nav-link">Comparison</a>
+                        <a href="needles.html" class="nav-link">Needle Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-4">Suture Types & Classifications</h1>
+            <p class="text-xl opacity-90">Comprehensive guide to suture materials, properties, and applications</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Classification Tree -->
+        <section class="classification-tree animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Suture Classification System</h2>
+            <p class="text-gray-600 mb-6">Sutures are classified based on absorbability, material origin, and filament structure</p>
+            <img src="resources/suture-classification.jpg" alt="Suture Classification Tree" class="tree-image">
+        </section>
+
+        <!-- Absorption Timeline -->
+        <section class="timeline-container animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Absorption Timeline Comparison</h2>
+            <p class="text-gray-600 mb-6">Understanding how long different sutures maintain their strength</p>
+            <div id="absorption-timeline" class="timeline-chart"></div>
+        </section>
+
+        <!-- Suture Types Grid -->
+        <section class="classification-section animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Detailed Suture Profiles</h2>
+            
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All Sutures</button>
+                <button class="filter-tab" data-filter="absorbable">Absorbable</button>
+                <button class="filter-tab" data-filter="nonabsorbable">Non-absorbable</button>
+                <button class="filter-tab" data-filter="natural">Natural</button>
+                <button class="filter-tab" data-filter="synthetic">Synthetic</button>
+                <button class="filter-tab" data-filter="monofilament">Monofilament</button>
+                <button class="filter-tab" data-filter="multifilament">Multifilament</button>
+            </div>
+
+            <!-- Suture Cards Grid -->
+            <div class="suture-grid" id="suture-grid">
+                <!-- Absorbable Natural -->
+                <div class="suture-card" data-categories="absorbable natural multifilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Plain Catgut</div>
+                            <div class="suture-type">Natural Absorbable</div>
+                        </div>
+                        <div class="absorbable-badge">Absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Natural collagen from sheep/bovine intestinal submucosa</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Twisted multifilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">70 days (proteolytic enzymatic degradation)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">7-10 days</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Internal soft tissue</span>
+                                <span class="tag">Ligation</span>
+                                <span class="tag">Pediatric surgery</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Excellent handling</span>
+                                <span class="tag advantage">Low cost</span>
+                                <span class="tag advantage">Good knot security</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">High tissue reactivity</span>
+                                <span class="tag disadvantage">Unpredictable absorption</span>
+                                <span class="tag disadvantage">Capillary action</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suture-card" data-categories="absorbable natural multifilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Chromic Catgut</div>
+                            <div class="suture-type">Natural Absorbable (Treated)</div>
+                        </div>
+                        <div class="absorbable-badge">Absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Collagen treated with chromium trioxide solution</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Twisted multifilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">90 days (delayed enzymatic degradation)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">10-14 days</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Internal soft tissue</span>
+                                <span class="tag">Ligation</span>
+                                <span class="tag">Oral surgery</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Longer lasting than plain</span>
+                                <span class="tag advantage">Better tensile strength</span>
+                                <span class="tag advantage">Improved handling</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">Still tissue reactive</span>
+                                <span class="tag disadvantage">Unpredictable absorption</span>
+                                <span class="tag disadvantage">Capillary action</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Absorbable Synthetic -->
+                <div class="suture-card" data-categories="absorbable synthetic multifilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Polyglactin 910 (Vicryl)</div>
+                            <div class="suture-type">Synthetic Absorbable</div>
+                        </div>
+                        <div class="absorbable-badge">Absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Copolymer of glycolide and lactide (90:10 ratio)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Braided multifilament with coating</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">56-70 days (hydrolysis)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">21-28 days (75% at 14 days)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Soft tissue approximation</span>
+                                <span class="tag">Subcutaneous closure</span>
+                                <span class="tag">General surgery</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Predictable absorption</span>
+                                <span class="tag advantage">Excellent handling</span>
+                                <span class="tag advantage">Coated for smooth passage</span>
+                                <span class="tag advantage">Good knot security</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">Braided - infection risk</span>
+                                <span class="tag disadvantage">Some tissue drag</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suture-card" data-categories="absorbable synthetic monofilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Poliglecaprone 25 (Monocryl)</div>
+                            <div class="suture-type">Synthetic Absorbable</div>
+                        </div>
+                        <div class="absorbable-badge">Absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Copolymer of glycolide and epsilon-caprolactone</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Monofilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">91-119 days (hydrolysis)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">14-21 days (50-60% at 7 days)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Subcuticular closure</span>
+                                <span class="tag">Soft tissue approximation</span>
+                                <span class="tag">Plastic surgery</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Monofilament - low infection risk</span>
+                                <span class="tag advantage">Excellent handling and pliability</span>
+                                <span class="tag advantage">Minimal tissue reaction</span>
+                                <span class="tag advantage">Good for cosmetic areas</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">Higher cost</span>
+                                <span class="tag disadvantage">Requires secure knotting</span>
+                                <span class="tag disadvantage">Some memory</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suture-card" data-categories="absorbable synthetic monofilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Polydioxanone (PDS)</div>
+                            <div class="suture-type">Synthetic Absorbable</div>
+                        </div>
+                        <div class="absorbable-badge">Absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Polyester polymer (poly-p-dioxanone)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Monofilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">180-210 days (hydrolysis)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">42-56 days (74% at 14 days)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Fascial closure</span>
+                                <span class="tag">Pediatric cardiovascular</span>
+                                <span class="tag">High-tension areas</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Long-term strength retention</span>
+                                <span class="tag advantage">Minimal tissue reaction</span>
+                                <span class="tag advantage">Monofilament - low infection</span>
+                                <span class="tag advantage">Excellent for fascia</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">Stiff handling</span>
+                                <span class="tag disadvantage">Higher cost</span>
+                                <span class="tag disadvantage">High memory</span>
+                                <span class="tag disadvantage">Difficult knot tying</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Non-absorbable Natural -->
+                <div class="suture-card" data-categories="nonabsorbable natural multifilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Silk</div>
+                            <div class="suture-type">Natural Non-absorbable</div>
+                        </div>
+                        <div class="nonabsorbable-badge">Non-absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Natural protein fiber from silkworm cocoon</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Braided multifilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">Non-absorbable (permanent)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">Permanent</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Ligation</span>
+                                <span class="tag">Tying drains</span>
+                                <span class="tag">Non-cutaneous applications</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Excellent handling</span>
+                                <span class="tag advantage">Superior knot security</span>
+                                <span class="tag advantage">Low cost</span>
+                                <span class="tag advantage">Smooth tie-down</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">High tissue reactivity</span>
+                                <span class="tag disadvantage">Capillary action</span>
+                                <span class="tag disadvantage">Infection risk</span>
+                                <span class="tag disadvantage">Not for skin closure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Non-absorbable Synthetic -->
+                <div class="suture-card" data-categories="nonabsorbable synthetic monofilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Nylon (Ethilon)</div>
+                            <div class="suture-type">Synthetic Non-absorbable</div>
+                        </div>
+                        <div class="nonabsorbable-badge">Non-absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Polyamide polymer</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Monofilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">Non-absorbable (minimal hydrolysis over years)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">Permanent (minimal loss over time)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Skin closure</span>
+                                <span class="tag">Microsurgery</span>
+                                <span class="tag">Cosmetic procedures</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Low tissue reactivity</span>
+                                <span class="tag advantage">Smooth tissue passage</span>
+                                <span class="tag advantage">Good tensile strength</span>
+                                <span class="tag advantage">Excellent for skin</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">High memory</span>
+                                <span class="tag disadvantage">Knot slippage risk</span>
+                                <span class="tag disadvantage">Stiff handling</span>
+                                <span class="tag disadvantage">Requires more throws</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suture-card" data-categories="nonabsorbable synthetic monofilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Polypropylene (Prolene)</div>
+                            <div class="suture-type">Synthetic Non-absorbable</div>
+                        </div>
+                        <div class="nonabsorbable-badge">Non-absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Isotactic crystalline stereoisomer of polypropylene</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Monofilament</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">Non-absorbable (permanent)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">Permanent</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Cardiovascular surgery</span>
+                                <span class="tag">Hernia repair</span>
+                                <span class="tag">Skin closure</span>
+                                <span class="tag">Tendon repair</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Minimal tissue reaction</span>
+                                <span class="tag advantage">High tensile strength</span>
+                                <span class="tag advantage">Excellent biocompatibility</span>
+                                <span class="tag advantage">Smooth passage</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">High memory</span>
+                                <span class="tag disadvantage">Knot security issues</span>
+                                <span class="tag disadvantage">Expensive</span>
+                                <span class="tag disadvantage">Difficult handling</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suture-card" data-categories="nonabsorbable synthetic multifilament">
+                    <div class="card-header">
+                        <div>
+                            <div class="suture-name">Polyester (Ethibond)</div>
+                            <div class="suture-type">Synthetic Non-absorbable</div>
+                        </div>
+                        <div class="nonabsorbable-badge">Non-absorbable</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="property-row">
+                            <div class="property-label">Material:</div>
+                            <div class="property-value">Polyethylene terephthalate (polyester)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Structure:</div>
+                            <div class="property-value">Braided multifilament with coating</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Absorption:</div>
+                            <div class="property-value">Non-absorbable (minimal over years)</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Tensile Strength:</div>
+                            <div class="property-value">Permanent</div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Applications:</div>
+                            <div class="property-value">
+                                <span class="tag">Cardiovascular surgery</span>
+                                <span class="tag">Orthopedic procedures</span>
+                                <span class="tag">Tendon repair</span>
+                                <span class="tag">High-tension areas</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Advantages:</div>
+                            <div class="property-value">
+                                <span class="tag advantage">Very high strength</span>
+                                <span class="tag advantage">Excellent handling</span>
+                                <span class="tag advantage">Coated options available</span>
+                                <span class="tag advantage">Superior knot security</span>
+                            </div>
+                        </div>
+                        <div class="property-row">
+                            <div class="property-label">Disadvantages:</div>
+                            <div class="property-value">
+                                <span class="tag disadvantage">Braided - infection risk</span>
+                                <span class="tag disadvantage">Tissue drag</span>
+                                <span class="tag disadvantage">Permanent foreign body</span>
+                                <span class="tag disadvantage">Higher cost</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="footer-content">
+                <p>&copy; 2024 SutureGuide - Interactive Medical Education. For educational purposes only. Always consult current medical guidelines and institutional protocols.</p>
+                <p>Designed & Developed by Ritik Dhage</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script>
+        // Initialize page functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSutureTypePage();
+            initializeAbsorptionTimeline();
+            initializeScrollAnimations();
+        });
+
+        function initializeSutureTypePage() {
+            // Filter functionality
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const sutureCards = document.querySelectorAll('.suture-card');
+
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.dataset.filter;
+                    
+                    // Filter cards
+                    sutureCards.forEach(card => {
+                        if (filter === 'all' || card.dataset.categories.includes(filter)) {
+                            card.style.display = 'block';
+                            anime({
+                                targets: card,
+                                opacity: [0, 1],
+                                translateY: [20, 0],
+                                duration: 300,
+                                easing: 'easeOutQuad'
+                            });
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Card expansion functionality
+            sutureCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const content = card.querySelector('.card-content');
+                    const isExpanded = content.classList.contains('expanded');
+                    
+                    // Close all other cards
+                    sutureCards.forEach(otherCard => {
+                        if (otherCard !== card) {
+                            otherCard.classList.remove('expanded');
+                            otherCard.querySelector('.card-content').classList.remove('expanded');
+                        }
+                    });
+                    
+                    // Toggle current card
+                    if (isExpanded) {
+                        card.classList.remove('expanded');
+                        content.classList.remove('expanded');
+                    } else {
+                        card.classList.add('expanded');
+                        content.classList.add('expanded');
+                    }
+                });
+            });
+        }
+
+        function initializeAbsorptionTimeline() {
+            const chart = echarts.init(document.getElementById('absorption-timeline'));
+            
+            const option = {
+                title: {
+                    text: 'Suture Tensile Strength Retention Over Time',
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: '#1B4B5A'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        let result = `Day ${params[0].axisValue}<br/>`;
+                        params.forEach(param => {
+                            result += `${param.seriesName}: ${param.value}%<br/>`;
+                        });
+                        return result;
+                    }
+                },
+                legend: {
+                    data: ['Plain Catgut', 'Chromic Catgut', 'Vicryl', 'Monocryl', 'PDS'],
+                    bottom: 10
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['0', '7', '14', '21', '28', '35', '42', '49', '56', '70', '90', '120'],
+                    name: 'Days',
+                    nameLocation: 'middle',
+                    nameGap: 30
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Tensile Strength Retention (%)',
+                    nameLocation: 'middle',
+                    nameGap: 50,
+                    min: 0,
+                    max: 100
+                },
+                series: [
+                    {
+                        name: 'Plain Catgut',
+                        type: 'line',
+                        data: [100, 70, 40, 20, 10, 5, 0, 0, 0, 0, 0, 0],
+                        smooth: true,
+                        itemStyle: { color: '#E07A5F' }
+                    },
+                    {
+                        name: 'Chromic Catgut',
+                        type: 'line',
+                        data: [100, 85, 65, 45, 30, 20, 15, 10, 5, 0, 0, 0],
+                        smooth: true,
+                        itemStyle: { color: '#81B29A' }
+                    },
+                    {
+                        name: 'Vicryl',
+                        type: 'line',
+                        data: [100, 95, 85, 75, 65, 50, 35, 25, 15, 5, 0, 0],
+                        smooth: true,
+                        itemStyle: { color: '#1B4B5A' }
+                    },
+                    {
+                        name: 'Monocryl',
+                        type: 'line',
+                        data: [100, 90, 70, 50, 30, 15, 10, 5, 0, 0, 0, 0],
+                        smooth: true,
+                        itemStyle: { color: '#F2CC8F' }
+                    },
+                    {
+                        name: 'PDS',
+                        type: 'line',
+                        data: [100, 98, 95, 90, 85, 80, 75, 70, 65, 60, 50, 40],
+                        smooth: true,
+                        itemStyle: { color: '#3D5A80' }
+                    }
+                ]
+            };
+            
+            chart.setOption(option);
+            
+            // Make chart responsive
+            window.addEventListener('resize', () => {
+                chart.resize();
+            });
+        }
+
+        function initializeScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suture Comparison Matrix - Medical Education Tool</title>
+    <meta name="description" content="Interactive suture comparison tool for side-by-side analysis of suture properties and characteristics.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #1B4B5A;
+            --secondary-color: #E07A5F;
+            --tertiary-color: #81B29A;
+            --neutral-base: #FAFAFA;
+            --text-color: #2C3E50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-base);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--tertiary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .navigation {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(27, 75, 90, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-link {
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .comparison-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .suture-selector {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .suture-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .suture-select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.1);
+        }
+        
+        .comparison-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .suture-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .suture-type {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .property-cell {
+            max-width: 200px;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: var(--text-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin: 0.125rem 0.25rem 0.125rem 0;
+        }
+        
+        .tag.advantage {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .tag.disadvantage {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .comparison-chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comparison-chart {
+            height: 500px;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #d16847;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(224, 122, 95, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #153a45;
+            transform: translateY(-2px);
+        }
+        
+        .selected-sutures {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .selected-suture {
+            background-color: var(--tertiary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .remove-suture {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            margin-left: 0.25rem;
+        }
+        
+        .remove-suture:hover {
+            color: #fee2e2;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .animate-on-scroll.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0f3a47 50%, var(--primary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.85;
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+        
+        .footer p:first-child {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .footer p:last-child {
+            opacity: 0.75;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .selector-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table {
+                font-size: 0.875rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-primary-color">SutureGuide</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="nav-link">Selection Wizard</a>
+                        <a href="types.html" class="nav-link">Suture Types</a>
+                        <a href="comparison.html" class="nav-link">Comparison</a>
+                        <a href="needles.html" class="nav-link">Needle Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-4">Suture Comparison Matrix</h1>
+            <p class="text-xl opacity-90">Side-by-side analysis of suture properties and characteristics</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Suture Selection -->
+        <section class="comparison-container animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Select Sutures for Comparison</h2>
+            <p class="text-gray-600 mb-6">Choose up to 4 sutures to compare their properties side by side</p>
+            
+            <div class="suture-selector">
+                <h3 class="text-xl font-semibold mb-3">Add Sutures to Comparison:</h3>
+                <div class="selector-grid">
+                    <select class="suture-select" id="suture-select-1">
+                        <option value="">Select first suture...</option>
+                    </select>
+                    <select class="suture-select" id="suture-select-2">
+                        <option value="">Select second suture...</option>
+                    </select>
+                    <select class="suture-select" id="suture-select-3">
+                        <option value="">Select third suture...</option>
+                    </select>
+                    <select class="suture-select" id="suture-select-4">
+                        <option value="">Select fourth suture...</option>
+                    </select>
+                </div>
+                
+                <div class="selected-sutures" id="selected-sutures"></div>
+                
+                <div class="flex gap-4 mt-4">
+                    <button class="btn btn-primary" onclick="updateComparison()">Update Comparison</button>
+                    <button class="btn btn-secondary" onclick="clearComparison()">Clear All</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Table -->
+        <section class="comparison-container animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Detailed Property Comparison</h2>
+            <div class="comparison-table-container">
+                <table class="comparison-table" id="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th colspan="4" class="text-center">Selected Sutures</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-table-body">
+                        <tr>
+                            <td colspan="5" class="text-center text-gray-500 py-8">
+                                Select sutures above to see detailed comparison
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Visual Comparison Chart -->
+        <section class="comparison-chart-container animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Visual Property Comparison</h2>
+            <p class="text-gray-600 mb-6">Radar chart comparing key performance characteristics</p>
+            <div id="comparison-radar-chart" class="comparison-chart"></div>
+        </section>
+
+        <!-- Quick Comparison Cards -->
+        <section class="comparison-container animate-on-scroll">
+            <h2 class="text-3xl font-bold mb-6">Quick Reference Comparison</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="quick-comparison-cards">
+                <div class="bg-gray-50 rounded-lg p-6 text-center">
+                    <p class="text-gray-500">Select sutures to see quick comparison cards</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="footer-content">
+                <p>&copy; 2024 SutureGuide - Interactive Medical Education. For educational purposes only. Always consult current medical guidelines and institutional protocols.</p>
+                <p>Designed & Developed by Ritik Dhage</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script>
+        // Comparison page specific functionality
+        let selectedSutures = [];
+        let comparisonChart = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeComparisonPage();
+            populateSutureSelectors();
+            initializeScrollAnimations();
+        });
+
+        function initializeComparisonPage() {
+            // Add event listeners to suture selectors
+            for (let i = 1; i <= 4; i++) {
+                const selector = document.getElementById(`suture-select-${i}`);
+                selector.addEventListener('change', (e) => {
+                    handleSutureSelection(e.target.value, i);
+                });
+            }
+        }
+
+        function populateSutureSelectors() {
+            const allSutures = getAllSuturesList();
+            
+            for (let i = 1; i <= 4; i++) {
+                const selector = document.getElementById(`suture-select-${i}`);
+                allSutures.forEach(suture => {
+                    const option = document.createElement('option');
+                    option.value = suture.name;
+                    option.textContent = suture.name;
+                    selector.appendChild(option);
+                });
+            }
+        }
+
+        function getAllSuturesList() {
+            const sutures = [];
+            
+            // Collect all sutures from database
+            for (const category of Object.values(sutureDatabase)) {
+                for (const type of Object.values(category)) {
+                    sutures.push(...type);
+                }
+            }
+            
+            return sutures.sort((a, b) => a.name.localeCompare(b.name));
+        }
+
+        function handleSutureSelection(sutureName, position) {
+            if (!sutureName) return;
+            
+            const suture = findSutureByName(sutureName);
+            if (!suture) return;
+
+            // Remove suture from other positions if already selected
+            selectedSutures = selectedSutures.filter(s => s.name !== sutureName);
+            
+            // Add to selected position
+            selectedSutures[position - 1] = suture;
+            
+            updateSelectedSuturesDisplay();
+        }
+
+        function findSutureByName(name) {
+            for (const category of Object.values(sutureDatabase)) {
+                for (const type of Object.values(category)) {
+                    const found = type.find(suture => suture.name === name);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        function updateSelectedSuturesDisplay() {
+            const container = document.getElementById('selected-sutures');
+            container.innerHTML = '';
+            
+            selectedSutures.forEach((suture, index) => {
+                if (suture) {
+                    const chip = document.createElement('div');
+                    chip.className = 'selected-suture';
+                    chip.innerHTML = `
+                        ${suture.name}
+                        <button class="remove-suture" onclick="removeSuture(${index})">×</button>
+                    `;
+                    container.appendChild(chip);
+                }
+            });
+        }
+
+        function removeSuture(index) {
+            selectedSutures[index] = null;
+            document.getElementById(`suture-select-${index + 1}`).value = '';
+            updateSelectedSuturesDisplay();
+        }
+
+        function updateComparison() {
+            const validSutures = selectedSutures.filter(s => s !== null && s !== undefined);
+            
+            if (validSutures.length < 2) {
+                alert('Please select at least 2 sutures for comparison');
+                return;
+            }
+            
+            updateComparisonTable(validSutures);
+            updateComparisonChart(validSutures);
+            updateQuickComparisonCards(validSutures);
+        }
+
+        function updateComparisonTable(sutures) {
+            const tbody = document.getElementById('comparison-table-body');
+            tbody.innerHTML = '';
+            
+            // Update table header
+            const headerRow = document.querySelector('.comparison-table thead tr');
+            headerRow.innerHTML = '<th>Property</th>';
+            sutures.forEach(suture => {
+                headerRow.innerHTML += `<th class="text-center">${suture.name}</th>`;
+            });
+            
+            // Add property rows
+            const properties = [
+                { key: 'material', label: 'Material' },
+                { key: 'absorption', label: 'Absorption' },
+                { key: 'tensileStrength', label: 'Tensile Strength' },
+                { key: 'applications', label: 'Applications' },
+                { key: 'advantages', label: 'Advantages' },
+                { key: 'disadvantages', label: 'Disadvantages' }
+            ];
+            
+            properties.forEach(prop => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td class="font-semibold text-primary-color">${prop.label}</td>`;
+                
+                sutures.forEach(suture => {
+                    const cell = document.createElement('td');
+                    cell.className = 'property-cell';
+                    
+                    let value = suture[prop.key];
+                    if (Array.isArray(value)) {
+                        cell.innerHTML = value.map(item => `<span class="tag">${item}</span>`).join('');
+                    } else {
+                        cell.textContent = value;
+                    }
+                    
+                    row.appendChild(cell);
+                });
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateComparisonChart(sutures) {
+            const chartContainer = document.getElementById('comparison-radar-chart');
+            
+            if (comparisonChart) {
+                comparisonChart.dispose();
+            }
+            
+            comparisonChart = echarts.init(chartContainer);
+            
+            const option = {
+                title: {
+                    text: 'Suture Properties Comparison',
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: '#1B4B5A'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    data: sutures.map(s => s.name),
+                    bottom: 10
+                },
+                radar: {
+                    indicator: [
+                        { name: 'Tensile Strength', max: 100 },
+                        { name: 'Handling', max: 100 },
+                        { name: 'Tissue Compatibility', max: 100 },
+                        { name: 'Cost Effectiveness', max: 100 },
+                        { name: 'Infection Resistance', max: 100 },
+                        { name: 'Knot Security', max: 100 }
+                    ],
+                    radius: '60%'
+                },
+                series: [{
+                    name: 'Suture Comparison',
+                    type: 'radar',
+                    data: sutures.map((suture, index) => ({
+                        value: calculateSutureScores(suture),
+                        name: suture.name,
+                        itemStyle: {
+                            color: getChartColor(index)
+                        }
+                    }))
+                }]
+            };
+            
+            comparisonChart.setOption(option);
+        }
+
+        function calculateSutureScores(suture) {
+            const scores = {
+                tensileStrength: suture.name.includes('PDS') || suture.name.includes('Prolene') ? 90 : 
+                               suture.name.includes('Vicryl') || suture.name.includes('Nylon') ? 75 : 60,
+                handling: suture.name.includes('Silk') || suture.name.includes('Vicryl') ? 90 :
+                         suture.name.includes('Monocryl') ? 85 :
+                         suture.material.includes('monofilament') ? 60 : 70,
+                tissueCompatibility: suture.material.includes('natural') ? 40 :
+                                    suture.material.includes('monofilament') ? 85 : 70,
+                costEffectiveness: suture.name.includes('Silk') || suture.name.includes('Catgut') ? 90 :
+                                  suture.name.includes('Nylon') ? 70 : 40,
+                infectionResistance: suture.material.includes('monofilament') ? 85 :
+                                    suture.material.includes('braided') ? 50 : 70,
+                knotSecurity: suture.name.includes('Silk') || suture.name.includes('Vicryl') ? 90 :
+                             suture.material.includes('monofilament') ? 60 : 75
+            };
+            
+            return [
+                scores.tensileStrength,
+                scores.handling,
+                scores.tissueCompatibility,
+                scores.costEffectiveness,
+                scores.infectionResistance,
+                scores.knotSecurity
+            ];
+        }
+
+        function getChartColor(index) {
+            const colors = ['#E07A5F', '#81B29A', '#1B4B5A', '#F2CC8F'];
+            return colors[index % colors.length];
+        }
+
+        function updateQuickComparisonCards(sutures) {
+            const container = document.getElementById('quick-comparison-cards');
+            container.innerHTML = '';
+            
+            sutures.forEach(suture => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg p-6 shadow-lg border-l-4 border-secondary-color';
+                card.innerHTML = `
+                    <h3 class="suture-name mb-2">${suture.name}</h3>
+                    <p class="suture-type mb-4">${suture.material}</p>
+                    <div class="space-y-2 text-sm">
+                        <div><strong>Absorption:</strong> ${suture.absorption}</div>
+                        <div><strong>Tensile Strength:</strong> ${suture.tensileStrength}</div>
+                        <div><strong>Best for:</strong> ${suture.applications.slice(0, 2).join(', ')}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function clearComparison() {
+            selectedSutures = [];
+            
+            // Clear selectors
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`suture-select-${i}`).value = '';
+            }
+            
+            // Clear displays
+            updateSelectedSuturesDisplay();
+            
+            // Reset table
+            const tbody = document.getElementById('comparison-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-gray-500 py-8">
+                        Select sutures above to see detailed comparison
+                    </td>
+                </tr>
+            `;
+            
+            // Reset chart
+            if (comparisonChart) {
+                comparisonChart.clear();
+            }
+            
+            // Reset quick cards
+            document.getElementById('quick-comparison-cards').innerHTML = `
+                <div class="bg-gray-50 rounded-lg p-6 text-center">
+                    <p class="text-gray-500">Select sutures to see quick comparison cards</p>
+                </div>
+            `;
+        }
+
+        function initializeScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Make functions globally available
+        window.updateComparison = updateComparison;
+        window.clearComparison = clearComparison;
+        window.removeSuture = removeSuture;
+    </script>
+</body>
+</html>
